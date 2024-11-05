@@ -5,7 +5,7 @@
  */
 
 
-#include <Fl/Fl.h>
+#include <FL/Fl.H>
 #include "WorldWindow.h"
 #include <stdio.h>
 

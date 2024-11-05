@@ -8,7 +8,7 @@
 #ifndef _GROUND_H_
 #define _GROUND_H_
 
-#include <Fl/gl.h>
+#include <FL/gl.h>
 
 class Ground {
   private:

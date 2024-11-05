@@ -11,8 +11,8 @@
 #ifndef _WORLDWINDOW_H_
 #define _WORLDWINDOW_H_
 
-#include <Fl/Fl.h>
-#include <Fl/Fl_Gl_Window.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Gl_Window.H>
 #include "Ground.h"
 #include "Track.h"
 

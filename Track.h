@@ -8,7 +8,7 @@
 #ifndef _TRAINTRACK_H_
 #define _TRAINTRACK_H_
 
-#include <Fl/gl.h>
+#include <FL/gl.h>
 #include "CubicBspline.h"
 
 class Track {

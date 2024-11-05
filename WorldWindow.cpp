@@ -8,8 +8,8 @@
  */
 
 #include "WorldWindow.h"
-#include <Fl/math.h>
-#include <Fl/gl.h>
+#include <FL/math.h>
+#include <FL/gl.h>
 #include <GL/glu.h>
 #include <stdio.h>
 
