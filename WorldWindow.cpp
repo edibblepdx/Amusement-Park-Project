@@ -16,7 +16,10 @@
 const double WorldWindow::FOV_X = 45.0;
 
 WorldWindow::WorldWindow(int x, int y, int width, int height, char *label)
-	: Fl_Gl_Window(x, y, width, height, label)
+: Fl_Gl_Window(x, y, width, height, label)
+, ground{}
+, traintrack{}
+, tree{FALL, 3.0f, 0.5f, 5.0f, 2.0f}
 {
     button = -1;
 
@@ -86,6 +89,7 @@ WorldWindow::draw(void)
 	// Initialize all the objects.
 	ground.Initialize();
 	traintrack.Initialize();
+	tree.Initialize();
     }
 
     // Stuff out here relies on a coordinate system or must be done on every
@@ -113,6 +117,7 @@ WorldWindow::draw(void)
     // Draw stuff. Everything.
     ground.Draw();
     traintrack.Draw();
+	tree.Draw();
 }
 
 

@@ -106,6 +106,7 @@
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="libtarga.c" />
     <ClCompile Include="Track.cpp" />
+    <ClCompile Include="Tree.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldWindow.cpp" />
   </ItemGroup>
@@ -115,6 +116,7 @@
     <ClInclude Include="Ground.h" />
     <ClInclude Include="libtarga.h" />
     <ClInclude Include="Track.h" />
+    <ClInclude Include="Tree.h" />
     <ClInclude Include="WorldWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
