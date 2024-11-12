@@ -20,6 +20,7 @@ WorldWindow::WorldWindow(int x, int y, int width, int height, char *label)
 , ground{}
 , traintrack{}
 , tree{FALL, 3.0f, 0.5f, 5.0f, 2.0f}
+//, horizon{}
 {
     button = -1;
 
@@ -88,6 +89,7 @@ WorldWindow::draw(void)
 
 	// Initialize all the objects.
 	ground.Initialize();
+	//horizon.Initialize();
 	traintrack.Initialize();
 	tree.Initialize();
     }
@@ -116,6 +118,7 @@ WorldWindow::draw(void)
 
     // Draw stuff. Everything.
     ground.Draw();
+	//horizon.Draw();
     traintrack.Draw();
 	tree.Draw();
 }

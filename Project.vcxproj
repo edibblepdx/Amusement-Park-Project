@@ -104,6 +104,7 @@
     <ClCompile Include="CubicBspline.cpp" />
     <ClCompile Include="GenericException.cpp" />
     <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="Horizon.cpp" />
     <ClCompile Include="libtarga.c" />
     <ClCompile Include="Track.cpp" />
     <ClCompile Include="Tree.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="CubicBspline.h" />
     <ClInclude Include="GenericException.h" />
     <ClInclude Include="Ground.h" />
+    <ClInclude Include="Horizon.h" />
     <ClInclude Include="libtarga.h" />
     <ClInclude Include="Track.h" />
     <ClInclude Include="Tree.h" />

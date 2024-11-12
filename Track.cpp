@@ -8,6 +8,8 @@
 #include "Track.h"
 #include <stdio.h>
 #include <FL/math.h>
+#include <GL/glu.h>
+#include <cmath>
 
 
 // The control points for the track spline.
@@ -57,8 +59,8 @@ Track::Initialize(void)
 
     // Create the track spline.
     track = new CubicBspline(3, true);
-    for ( i = 0 ; i < TRACK_NUM_CONTROLS ; i++ )
-	track->Append_Control(TRACK_CONTROLS[i]);
+    for (i = 0; i < TRACK_NUM_CONTROLS; i++)
+        track->Append_Control(TRACK_CONTROLS[i]);
 
     // Refine it down to a fixed tolerance. This means that any point on
     // the track that is drawn will be less than 0.1 units from its true
@@ -69,17 +71,80 @@ Track::Initialize(void)
     // Create the display list for the track - just a set of line segments
     // We just use curve evaluated at integer paramer values, because the
     // subdivision has made sure that these are good enough.
+    /*
     track_list = glGenLists(1);
     glNewList(track_list, GL_COMPILE);
-	glColor3f(1.0f, 1.0, 1.0f);
-	glBegin(GL_LINE_STRIP);
-	    for ( i = 0 ; i <= n_refined ; i++ )
-	    {
-		refined.Evaluate_Point((float)i, p);
-		glVertex3fv(p);
-	    }
-	glEnd();
+    glColor3f(1.0f, 1.0, 1.0f);
+    glBegin(GL_LINE_STRIP);
+        for ( i = 0 ; i <= n_refined ; i++ )
+        {
+        refined.Evaluate_Point((float)i, p);
+        glVertex3fv(p);
+        }
+    glEnd();
     glEndList();
+    */
+
+    // Create a quadratic object
+    GLUquadric* quad = gluNewQuadric();
+    gluQuadricNormals(quad, GLU_SMOOTH);
+    float       j{};
+    float       step{ 0.25 };
+    float       tangent[3];
+    float       axis[3];
+    double      angle{ 0.0 };
+    GLdouble    radius{ 0.15 };
+    GLdouble    height{ 0.4 };
+    GLint       slices{ 8 };
+    GLint       stacks{ 2 };
+
+    // Create the display list for the track as a swept object
+    track_list = glGenLists(1);
+    glNewList(track_list, GL_COMPILE);
+	glColor3f(0.6f, 0.6f, 0.6f);    // gray
+	for ( j = 0.0 ; j <= n_refined ; j+=step ) // loop over n_refined control points
+	{
+        // Find the point along the BSpline.
+		refined.Evaluate_Point((float)j, p);
+        glPushMatrix();
+
+        glTranslatef(p[0], p[1], p[2]);
+
+        // Find the tangent to the BSpline.
+		refined.Evaluate_Derivative((float)j, tangent);
+		Normalize_3(tangent);
+
+        // We want to orient +z in the direction of the tangent line.
+        // Find (0, 0, 1) x (t1, t2, t3). This will be our axis of rotation.
+        axis[0] = -tangent[1];
+        axis[1] = tangent[0];
+        axis[2] = 0.0f;
+        Normalize_3(axis);
+
+        // From the dot product we find the angle between +z and the tangent line to the BSpline.
+        // Rotate around 'axis', 'angle' degrees.
+        angle = acos(tangent[2]) * 180.0 / M_PI;
+        glRotatef((float)angle, axis[0], axis[1], axis[2]);
+
+        // Draw the Cylinder
+        gluCylinder(quad, radius, radius, height, slices, stacks);
+
+		glPopMatrix();
+
+        // add supports
+        if ( std::fmod(j, 10.0) == 0.0 )
+        {
+			glPushMatrix();
+			glTranslatef(p[0], p[1], 0.0);
+			// Draw the Support Cylinder
+			gluCylinder(quad, radius, radius, p[2], slices, stacks);
+			glPopMatrix();
+        }
+	}
+    glEndList();
+
+    // Destroy the quadratics object
+    gluDeleteQuadric(quad);
 
     // Set up the train. At this point a cube is drawn. NOTE: The
     // x-axis will be aligned to point along the track. The origin of the

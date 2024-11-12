@@ -49,26 +49,22 @@ Tree::Initialize(void)
     display_list = glGenLists(1);
     glNewList(display_list, GL_COMPILE);
 
-    GLUquadric* quad = gluNewQuadric();
+    // Create a quadratic object
+    GLUquadric *quad = gluNewQuadric();
     gluQuadricNormals(quad, GLU_SMOOTH);
 
     // Draw the trunk as a cylinder
     glColor3f(0.2f, 0.15f, 0.1f);   // brown
     gluCylinder(quad, trunkRadius, trunkRadius, trunkHeight, 16, 4);
 
-    // Draw the foliage
-    glColor3fv(foliageColors.at(season).data());
-    glPushMatrix();
-    glTranslatef(0.0f, 0.0f, trunkHeight);  // place foliage on top of the trunk
-
     // Draw the foliage as a cone
+    glColor3fv(foliageColors.at(season).data());    // foliage color based on season
+    glTranslatef(0.0f, 0.0f, trunkHeight);          // place foliage on top of the trunk
     gluCylinder(quad, foliageRadius, 0.0f, foliageHeight, 16, 4);
 
     // Draw the bottom of the foliage as a disk
     gluQuadricOrientation(quad, GLU_INSIDE);   // have normals face -z
     gluDisk(quad, 0.0f, foliageRadius, 16, 1);
-
-    glPopMatrix();
 
     // Destroy the quadratics object
     gluDeleteQuadric(quad);
