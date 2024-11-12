@@ -13,6 +13,7 @@ add_executable(executable
     GenericException.cpp
     Ground.cpp
     Track.cpp
+    Tree.cpp
     World.cpp
     WorldWindow.cpp
 )
