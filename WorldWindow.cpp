@@ -19,7 +19,10 @@ WorldWindow::WorldWindow(int x, int y, int width, int height, char *label)
 : Fl_Gl_Window(x, y, width, height, label)
 , ground{}
 , traintrack{}
-, tree{FALL, 3.0f, 0.5f, 5.0f, 2.0f}
+, springTree{SPRING, 2.0f, 0.25f, 8.0f, 2.0f}
+, summerTree{SUMMER, 1.75f, 1.0f, 6.0f, 3.5f}
+, fallTree{FALL, 3.0f, 0.5f, 5.0f, 2.0f}
+, winterTree{WINTER, 4.0f, 0.5f, 7.0f, 3.0f}
 //, horizon{}
 {
     button = -1;
@@ -91,7 +94,10 @@ WorldWindow::draw(void)
 	ground.Initialize();
 	//horizon.Initialize();
 	traintrack.Initialize();
-	tree.Initialize();
+	springTree.Initialize();
+	summerTree.Initialize();
+	fallTree.Initialize();
+	winterTree.Initialize();
     }
 
     // Stuff out here relies on a coordinate system or must be done on every
@@ -120,7 +126,27 @@ WorldWindow::draw(void)
     ground.Draw();
 	//horizon.Draw();
     traintrack.Draw();
-	tree.Draw();
+
+    glPushMatrix();
+    glTranslatef(20.0f, 20.0f, 0.0f);
+	springTree.Draw();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(20.0f, 10.0f, 0.0f);
+	summerTree.Draw();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(20.0f, 0.0f, 0.0f);
+	fallTree.Draw();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(20.0f, -10.0f, 0.0f);
+	winterTree.Draw();
+    glPopMatrix();
+
 }
 
 

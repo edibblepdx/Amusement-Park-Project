@@ -126,10 +126,34 @@ Track::Initialize(void)
         angle = acos(tangent[2]) * 180.0 / M_PI;
         glRotatef((float)angle, axis[0], axis[1], axis[2]);
 
-        // Draw the Cylinder
+        // draw the Cylinder
         gluCylinder(quad, radius, radius, height, slices, stacks);
 
 		glPopMatrix();
+
+        /*
+        // draw inner track
+        glPushMatrix();
+            glTranslatef(0.95 * p[0], 0.95 * p[1], p[2]);
+            glRotatef((float)angle, axis[0], axis[1], axis[2]);
+            gluCylinder(quad, radius, radius, height, slices, stacks);
+		glPopMatrix();
+
+        // draw outer track
+        glPushMatrix();
+            glTranslatef(1.05 * p[0], 1.05 * p[1], p[2]);
+            glRotatef((float)angle, axis[0], axis[1], axis[2]);
+            gluCylinder(quad, radius, radius, height, slices, stacks);
+		glPopMatrix();
+        */
+
+        // draw cross beams
+        /*
+        if ( std::fmod(j, 1.0) == 0.0 )
+        {
+            // I don't know how
+        }
+        */
 
         // add supports
         if ( std::fmod(j, 10.0) == 0.0 )

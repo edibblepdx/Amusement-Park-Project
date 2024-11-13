@@ -37,7 +37,7 @@ main(int argc, char *argv[])
 {
     // Fl::visual(FL_RGB);
 
-    world_window = new WorldWindow(100, 100, 800, 600, "World");
+    world_window = new WorldWindow(100, 100, 1600, 1200, "World");
 
     world_window->show(argc, argv);
 
