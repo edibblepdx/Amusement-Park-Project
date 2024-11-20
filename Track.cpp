@@ -5,11 +5,16 @@
  */
 
 
-#include "Track.h"
 #include <stdio.h>
+#include <iostream>
 #include <FL/math.h>
+#include <GL/glew.h>
 #include <GL/glu.h>
 #include <cmath>
+#include "Track.h"
+#include "GenericException.h"
+#include "objloader.h"
+#include "vboindexer.hpp"
 
 
 // The control points for the track spline.
@@ -127,11 +132,10 @@ Track::Initialize(void)
         glRotatef((float)angle, axis[0], axis[1], axis[2]);
 
         // draw the Cylinder
-        gluCylinder(quad, radius, radius, height, slices, stacks);
+        //gluCylinder(quad, radius, radius, height, slices, stacks);
 
 		glPopMatrix();
-
-        /*
+        
         // draw inner track
         glPushMatrix();
             glTranslatef(0.95 * p[0], 0.95 * p[1], p[2]);
@@ -145,13 +149,12 @@ Track::Initialize(void)
             glRotatef((float)angle, axis[0], axis[1], axis[2]);
             gluCylinder(quad, radius, radius, height, slices, stacks);
 		glPopMatrix();
-        */
-
+       
         // draw cross beams
         /*
         if ( std::fmod(j, 1.0) == 0.0 )
         {
-            // I don't know how
+            // don't know how
         }
         */
 
@@ -173,6 +176,7 @@ Track::Initialize(void)
     // Set up the train. At this point a cube is drawn. NOTE: The
     // x-axis will be aligned to point along the track. The origin of the
     // train is assumed to be at the bottom of the train.
+    /*
     train_list = glGenLists(1);
     glNewList(train_list, GL_COMPILE);
     glColor3f(1.0, 0.0, 0.0);
@@ -214,6 +218,25 @@ Track::Initialize(void)
 	glVertex3f(-0.5f, -0.5f, 0.0f);
     glEnd();
     glEndList();
+    */
+
+    if (!ObjLoader("train_car.obj", train_vertices, train_uvs, train_normals))
+        throw new GenericException("Track::C - Failed to load track car");
+
+    // vertexbuffer
+    glGenBuffers(1, &vertexbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glBufferData(GL_ARRAY_BUFFER, train_vertices.size() * sizeof(glm::vec3), &train_vertices[0], GL_STATIC_DRAW);
+
+    // uvbuffer
+	glGenBuffers(1, &uvbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+	glBufferData(GL_ARRAY_BUFFER, train_uvs.size() * sizeof(glm::vec2), &train_uvs[0], GL_STATIC_DRAW);
+
+    //normalbuffer
+	glGenBuffers(1, &normalbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+	glBufferData(GL_ARRAY_BUFFER, train_normals.size() * sizeof(glm::vec3), &train_normals[0], GL_STATIC_DRAW);
 
     initialized = true;
 
@@ -243,13 +266,14 @@ Track::Draw(void)
     track->Evaluate_Point(posn_on_track, posn);
 
     // Translate the train to the point
-    glTranslatef(posn[0], posn[1], posn[2]);
+    // move it a little above the track
+    glTranslatef(posn[0], posn[1], posn[2]+0.3);
 
     // ...and what it's orientation is
     track->Evaluate_Derivative(posn_on_track, tangent);
     Normalize_3(tangent);
 
-    // Rotate it to poitn along the track, but stay horizontal
+    // Rotate it to point along the track, but stay horizontal
     angle = atan2(tangent[1], tangent[0]) * 180.0 / M_PI;
     glRotatef((float)angle, 0.0f, 0.0f, 1.0f);
 
@@ -257,8 +281,56 @@ Track::Draw(void)
     angle = asin(-tangent[2]) * 180.0 / M_PI;
     glRotatef((float)angle, 0.0f, 1.0f, 0.0f);
 
+    // Because the car was sideways
+    glRotatef((float)90, 0.0f, 0.0f, -1.0f);
+
     // Draw the train
-    glCallList(train_list);
+    //glCallList(train_list);
+
+    glColor3f(1.0f, 0.0f, 0.0f);
+
+    // 1st attribute buffer : vertices
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glVertexAttribPointer(
+        0,                  // attribute
+        3,                  // size
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
+    
+    // 2nd attribute buffer : UVs
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glVertexAttribPointer(
+        1,                  // attribute
+        2,                  // size
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
+
+    // 3rd attribute buffer : normals
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+    glVertexAttribPointer(
+        2,                  // attribute
+        3,                  // size
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
+
+    // draw the triangles
+    glDrawArrays(GL_TRIANGLES, 0, train_vertices.size());
+    
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
 
     glPopMatrix();
     glPopMatrix();

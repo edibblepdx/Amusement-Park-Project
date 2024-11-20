@@ -5,9 +5,9 @@
  */
 
 
+#include <stdio.h>
 #include <FL/Fl.H>
 #include "WorldWindow.h"
-#include <stdio.h>
 
 
 // The time per frame, in seconds (enforced only by timeouts.)

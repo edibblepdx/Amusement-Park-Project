@@ -16,6 +16,7 @@ add_executable(executable
     Tree.cpp
     World.cpp
     WorldWindow.cpp
+    vboindexer.cpp
 )
 
 # Add include directories
@@ -25,6 +26,7 @@ target_include_directories(executable PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(executable
     fltk
     fltk_gl
+    GLEW
     GL
     GLU
 )
@@ -32,3 +34,6 @@ target_link_libraries(executable
 # copy .tga files to build directory
 file(GLOB TGA_FILES "*.tga")
 file(COPY ${TGA_FILES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+# copy .obj files to build directory
+file(GLOB OBJ_FILES "*.obj")
+file(COPY ${OBJ_FILES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")

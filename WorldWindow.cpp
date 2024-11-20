@@ -7,11 +7,12 @@
  *
  */
 
-#include "WorldWindow.h"
+#include <stdio.h>
+#include <GL/glew.h>
 #include <FL/math.h>
 #include <FL/gl.h>
 #include <GL/glu.h>
-#include <stdio.h>
+#include "WorldWindow.h"
 
 const double WorldWindow::FOV_X = 45.0;
 
@@ -48,6 +49,14 @@ WorldWindow::draw(void)
 	// Stuff in here doesn't change from frame to frame, and does not
 	// rely on any coordinate system. It only has to be done if the
 	// GL context is damaged.
+
+    // initialize glew (for models)
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+        /* Problem: glewInit failed, something is seriously wrong. */
+        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    }
 
 	double	fov_y;
 

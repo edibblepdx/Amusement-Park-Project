@@ -3,10 +3,10 @@
  */
 
 
-#include "Tree.h"
-#include "libtarga.h"
 #include <stdio.h>
 #include <GL/glu.h>
+#include "Tree.h"
+#include "libtarga.h"
 
 // create a map of (Season, color array) pairs; this will set the foliage color based on season.
 const std::map<Season, std::array<GLfloat, 3>> Tree::foliageColors = {

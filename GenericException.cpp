@@ -4,8 +4,8 @@
  * (c) 2001-2002 Stephen Chenney, University of Wisconsin at Madison
  */
 
-#include "GenericException.h"
 #include <string.h>
+#include "GenericException.h"
 
 
 // Constructor stores the message.

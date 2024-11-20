@@ -9,6 +9,8 @@
 #define _TRAINTRACK_H_
 
 #include <FL/gl.h>
+#include <vector>
+#include <glm/glm.hpp>
 #include "CubicBspline.h"
 
 class Track {
@@ -16,14 +18,23 @@ class Track {
     GLubyte 	    track_list;	    // The display list for the track.
     GLubyte 	    train_list;	    // The display list for the train.
     bool    	    initialized;    // Whether or not we have been initialized.
-    CubicBspline    *track;	    // The spline that defines the track.
-    float	    posn_on_track;  // The train's parametric position on the
-				    // track.
-    float	    speed;	    // The train's speed, in world coordinates
+    CubicBspline    *track;	        // The spline that defines the track.
+    float	        posn_on_track;  // The train's parametric position on the track.
+    float	        speed;	        // The train's speed, in world coordinates
 
     static const int	TRACK_NUM_CONTROLS;	// Constants about the track.
     static const float 	TRACK_CONTROLS[][3];
     static const float 	TRAIN_ENERGY;
+
+    // my train model
+    std::vector<glm::vec3> train_vertices;
+    std::vector<glm::vec2> train_uvs;
+    std::vector<glm::vec3> train_normals;
+
+    // my train buffers
+    GLuint vertexbuffer;
+	GLuint uvbuffer;
+	GLuint normalbuffer;
 
   public:
     // Constructor

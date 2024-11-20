@@ -4,9 +4,9 @@
  * (c) 2002 Stephen Chenney, University of Wisconsin at Madison
  */
 
+#include <math.h>
 #include "CubicBspline.h"
 #include "GenericException.h"
-#include <math.h>
 
 
 /* Initializes with the given dimension and control points. */

@@ -5,10 +5,10 @@
  */
 
 
-#include "Ground.h"
-#include "libtarga.h"
 #include <stdio.h>
 #include <GL/glu.h>
+#include "Ground.h"
+#include "libtarga.h"
 
 // Destructor
 Ground::~Ground(void)
