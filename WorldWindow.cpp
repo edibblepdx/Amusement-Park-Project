@@ -83,6 +83,10 @@ WorldWindow::draw(void)
 	// normal vector, and you can scale objects.
 	glEnable(GL_NORMALIZE);
 
+    // Allow opengl to look for normals in the bound buffer object
+    // necessary for my models to look right.
+    glEnableClientState(GL_NORMAL_ARRAY);
+
 	// Set up the viewport.
 	glViewport(0, 0, w(), h());
 

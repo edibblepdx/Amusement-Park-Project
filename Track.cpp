@@ -287,7 +287,7 @@ Track::Draw(void)
     // Draw the train
     //glCallList(train_list);
 
-    glColor3f(1.0f, 0.0f, 0.0f);
+    glColor3f(0.9f, 0.0f, 0.0f);
 
     // 1st attribute buffer : vertices
     glEnableVertexAttribArray(0);
@@ -325,6 +325,8 @@ Track::Draw(void)
         (void*)0            // array buffer offset
     );
 
+    // tell opengl how my normals are stored: floats, consecutively, zero offset.
+    glNormalPointer(GL_FLOAT, 0, nullptr);
     // draw the triangles
     glDrawArrays(GL_TRIANGLES, 0, train_vertices.size());
     
