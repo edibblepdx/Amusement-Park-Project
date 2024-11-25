@@ -189,7 +189,8 @@ Carousel::Draw(void)
     {
         glPushMatrix();
         glRotatef(step * i, 0.0f, 0.0f, 1.0f);
-        glTranslatef(dist, 0.0f, glm::clamp(fmod(theta, column_height + i), 0.0, column_height - 3.0));
+        if (up) glTranslatef(dist, 0.0f, horse_offset * max_horse_height / 100.0f);
+        else glTranslatef(dist, 0.0f, max_horse_height - horse_offset * max_horse_height / 100.0f);
         glDrawArrays(GL_TRIANGLES, 0, horse_vertices.size());
         glPopMatrix();
     }
@@ -214,6 +215,13 @@ Carousel::Update(float dt)
 
     theta += speed * dt;
     if (theta > 360.0f) theta -= 360.0f;
+
+    horse_offset += speed * dt * 2;
+    if (horse_offset > 100.0f) 
+    {
+        horse_offset -= 100.0f;
+        up = !up;
+    }
 }
 
 

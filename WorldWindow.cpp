@@ -151,7 +151,10 @@ WorldWindow::draw(void)
 	teacups.Draw();
     glPopMatrix();
 
+    glPushMatrix();
+    glTranslatef(-13.0f, -33.0f, 0.0f);
     carousel.Draw();
+    glPopMatrix();
 
     // Spring Forest
     for (unsigned int i = 0; i < springForest.size(); i += 3)
