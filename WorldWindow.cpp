@@ -109,7 +109,7 @@ WorldWindow::draw(void)
         ground.Initialize();
         //horizon.Initialize();
         traintrack.Initialize();
-        //teacups.Initialize();
+        teacups.Initialize();
         springTree.Initialize();
         summerTree.Initialize();
         fallTree.Initialize();
@@ -142,7 +142,7 @@ WorldWindow::draw(void)
     ground.Draw();
 	//horizon.Draw();
     traintrack.Draw();
-	//teacups.Draw();
+	teacups.Draw();
 
     glPushMatrix();
     glTranslatef(20.0f, 20.0f, 0.0f);
