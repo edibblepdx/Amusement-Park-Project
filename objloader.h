@@ -20,10 +20,10 @@ static inline bool ObjLoader(const char *filename
     }
 
     char lineHeader[128];
+    std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
     std::vector<glm::vec3> temp_vertices;
     std::vector<glm::vec2> temp_uvs;
     std::vector<glm::vec3> temp_normals;
-    std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 
     // read the file
     while (fscanf(file, "%s", lineHeader) != EOF)
@@ -54,17 +54,18 @@ static inline bool ObjLoader(const char *filename
             // face
             unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
             fscanf(file
-                  , "%d/%d/%d %d/%d/%d %d/%d/%d\n"
-                  , &vertexIndex[0], &uvIndex[0], &normalIndex[0]
-                  , &vertexIndex[1], &uvIndex[1], &normalIndex[1]
-                  , &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+                , "%d/%d/%d %d/%d/%d %d/%d/%d\n"
+                , &vertexIndex[0], &uvIndex[0], &normalIndex[0]
+                , &vertexIndex[1], &uvIndex[1], &normalIndex[1]
+                , &vertexIndex[2], &uvIndex[2], &normalIndex[2]
+            );
 
             vertexIndices.push_back(vertexIndex[0]);
             vertexIndices.push_back(vertexIndex[1]);
             vertexIndices.push_back(vertexIndex[2]);
-            uvIndices.push_back(uvIndex[0]);
-            uvIndices.push_back(uvIndex[1]);
-            uvIndices.push_back(uvIndex[2]);
+            uvIndices    .push_back(uvIndex[0]);
+            uvIndices    .push_back(uvIndex[1]);
+            uvIndices    .push_back(uvIndex[2]);
             normalIndices.push_back(normalIndex[0]);
             normalIndices.push_back(normalIndex[1]);
             normalIndices.push_back(normalIndex[2]);
@@ -89,8 +90,8 @@ static inline bool ObjLoader(const char *filename
         glm::vec3 normal = temp_normals[normalIndex - 1];
 
         vertices.push_back(vertex);
-        uvs.push_back(uv);
-        normals.push_back(normal);
+        uvs     .push_back(uv);
+        normals .push_back(normal);
     }
 
     fclose(file);

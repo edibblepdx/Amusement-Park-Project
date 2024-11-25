@@ -15,8 +15,8 @@ Ground::~Ground(void)
 {
     if ( initialized )
     {
-	glDeleteLists(display_list, 1);
-	glDeleteTextures(1, &texture_obj);
+        glDeleteLists(display_list, 1);
+        glDeleteTextures(1, &texture_obj);
     }
 }
 
@@ -34,8 +34,8 @@ Ground::Initialize(void)
     if ( ! ( image_data = (ubyte*)tga_load("grass.tga", &image_width,
 					   &image_height, TGA_TRUECOLOR_24) ) )
     {
-	fprintf(stderr, "Ground::Initialize: Couldn't load grass.tga\n");
-	return false;
+        fprintf(stderr, "Ground::Initialize: Couldn't load grass.tga\n");
+        return false;
     }
 
     // This creates a texture object and binds it, so the next few operations
@@ -51,13 +51,11 @@ Ground::Initialize(void)
     // mipmaps from the image data, then it sets the filtering parameters
     // and the wrapping parameters. We want the grass to be repeated over the
     // ground.
-    gluBuild2DMipmaps(GL_TEXTURE_2D,3, image_width, image_height, 
-		      GL_RGB, GL_UNSIGNED_BYTE, image_data);
+    gluBuild2DMipmaps(GL_TEXTURE_2D,3, image_width, image_height, GL_RGB, GL_UNSIGNED_BYTE, image_data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-		    GL_NEAREST_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 
     // This says what to do with the texture. Modulate will multiply the
     // texture by the underlying color.

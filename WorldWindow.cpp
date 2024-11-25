@@ -142,27 +142,59 @@ WorldWindow::draw(void)
     ground.Draw();
 	//horizon.Draw();
     traintrack.Draw();
+
+    glPushMatrix();
+    glTranslatef(-23.0f, -23.0f, 0.0f);
 	teacups.Draw();
-
-    glPushMatrix();
-    glTranslatef(20.0f, 20.0f, 0.0f);
-	springTree.Draw();
     glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(20.0f, 10.0f, 0.0f);
-	summerTree.Draw();
-    glPopMatrix();
+    // Spring Forest
+    for (unsigned int i = 0; i < springForest.size(); i += 3)
+    {
+        glPushMatrix();
+        glTranslatef(springForest.at(i), springForest.at(i+1), springForest.at(i+2));
+        springTree.Draw();
+        glPopMatrix();
+    }
 
-    glPushMatrix();
-    glTranslatef(20.0f, 0.0f, 0.0f);
-	fallTree.Draw();
-    glPopMatrix();
+    // Summer Forest
+    for (unsigned int i = 0; i < summerForest.size(); i += 3)
+    {
+        glPushMatrix();
+        glTranslatef(summerForest.at(i), summerForest.at(i+1), summerForest.at(i+2));
+        summerTree.Draw();
+        glPopMatrix();
+    }
 
+    // Fall Forest
+    for (unsigned int i = 0; i < fallForest.size(); i += 3)
+    {
+        glPushMatrix();
+        glTranslatef(fallForest.at(i), fallForest.at(i+1), fallForest.at(i+2));
+        fallTree.Draw();
+        glPopMatrix();
+    }
+
+    // Winter Forest
+    for (unsigned int i = 0; i < winterForest.size(); i += 3)
+    {
+        glPushMatrix();
+        glTranslatef(winterForest.at(i), winterForest.at(i+1), winterForest.at(i+2));
+        winterTree.Draw();
+        glPopMatrix();
+    }
+
+
+    /*
     glPushMatrix();
-    glTranslatef(20.0f, -10.0f, 0.0f);
+    glTranslatef(-50.0f, -40.0f, 0.0f);
 	winterTree.Draw();
     glPopMatrix();
+    */
+    
+    // Northeast Green Forest
+
+    // Southeast Green and Fall forest
 
 }
 

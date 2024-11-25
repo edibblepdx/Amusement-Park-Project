@@ -13,6 +13,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Gl_Window.H>
+#include <array>
 #include "Ground.h"
 #include "Track.h"
 #include "Teacups.h"
@@ -69,6 +70,52 @@ class WorldWindow : public Fl_Gl_Window {
 	float	y_at_down;  // The y-coord to look at when the mouse went down.
 
 	void	Drag(float);	// The function to call for mouse drag events
+                            
+    // based on camera spawn
+    // +down, +right
+    // -up, -left
+    std::array<float, 3 * 7> springForest {
+        //bottom right
+        45.0f, 45.0f, 0.0f,
+        27.0f, 35.0f, 0.0f,
+        37.0f, 32.0f, 0.0f,
+        22.0f, 39.0f, 0.0f,
+
+        // top right
+        -22.0f, 39.0f, 0.0f,
+        -27.0f, 35.0f, 0.0f,
+        -37.0f, 32.0f, 0.0f,
+    };
+
+    std::array<float, 3 * 6> summerForest {
+        // top left
+        -44.0f, -26.0f, 0.0f,
+        -33.0f, -42.0f, 0.0f,
+        -36.0f, -24.0f, 0.0f,
+        -24.0f, -44.0f, 0.0f,
+
+        // top right
+        -44.0f, 26.0f, 0.0f,
+        -33.0f, 42.0f, 0.0f,
+    };
+
+    std::array<float, 3 * 5> fallForest {
+        // bottom right
+        44.0f, 30.0f, 0.0f,
+        34.0f, 42.0f, 0.0f,
+        24.0f, 44.0f, 0.0f,
+
+        // top right
+        -44.0f, 42.0f, 0.0f,
+        43.0f, 39.0f, 0.0f,
+    };
+
+    std::array<float, 3 * 3> winterForest {
+        // top left
+        -45.0f, -45.0f, 0.0f,
+        -27.0f, -35.0f, 0.0f,
+        -37.0f, -32.0f, 0.0f,
+    };
 };
 
 

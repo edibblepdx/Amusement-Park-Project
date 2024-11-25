@@ -26,7 +26,7 @@ Teacups::~Teacups(void)
         glDeleteBuffers(1, &vertexbuffer);
         glDeleteBuffers(1, &uvbuffer);
         glDeleteBuffers(1, &normalbuffer);
-        //delete image;
+        glDeleteTextures(1, &texture_obj);
     }
 }
 
@@ -36,14 +36,6 @@ bool
 Teacups::Initialize(void)
 {
     // Load textures
-    glGenTextures(1, &texture_obj);
-    glBindTexture(GL_TEXTURE_2D, texture_obj);
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // load and generate the texture
     ubyte   *image_data;
     int	    image_height, image_width;
     if ( ! ( image_data = (ubyte*)tga_load("teacup_tex.tga", &image_width, &image_height, TGA_TRUECOLOR_24) ) )
@@ -51,8 +43,25 @@ Teacups::Initialize(void)
         fprintf(stderr, "Ground::Initialize: Couldn't load teacup_tex.tga\n");
         return false;
     }
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image_width, image_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data);
-    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // create texture object
+    glGenTextures(1, &texture_obj);
+    glBindTexture(GL_TEXTURE_2D, texture_obj);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    gluBuild2DMipmaps(GL_TEXTURE_2D,3, image_width, image_height, GL_RGB, GL_UNSIGNED_BYTE, image_data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // multiply texture by underlying color
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); 
+
+    // load and generate the texture
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image_width, image_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data);
+    //glGenerateMipmap(GL_TEXTURE_2D);
 
     // make the spinning track
     GLUquadric* quad = gluNewQuadric();
@@ -136,7 +145,7 @@ Teacups::Draw(void)
 
 	// Turn on texturing and bind the teacup texture.
 	glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE0);
+    //glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_obj);
     //glTexCoordPointer(2, GL_FLOAT, 0, &teacup_uvs[0]);
 
@@ -185,7 +194,9 @@ Teacups::Draw(void)
         (void*)0            // array buffer offset
     );
 
-    // tell opengl how my normals are stored: floats, consecutively, zero offset.
+    // tell opengl how my vertices, uvs, and normals are stored
+    glVertexPointer(3, GL_FLOAT, 0, nullptr);
+    glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
     glNormalPointer(GL_FLOAT, 0, nullptr);
 
     // draw the triangles
@@ -209,9 +220,8 @@ Teacups::Draw(void)
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
 
-	// Turn texturing off again, because we don't want everything else to be textured.
+	// Turn texturing off
 	glDisable(GL_TEXTURE_2D);
-
 }
 
 
