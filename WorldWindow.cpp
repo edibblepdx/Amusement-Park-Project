@@ -46,71 +46,74 @@ WorldWindow::draw(void)
 
     if ( ! valid() )
     {
-	// Stuff in here doesn't change from frame to frame, and does not
-	// rely on any coordinate system. It only has to be done if the
-	// GL context is damaged.
+        // Stuff in here doesn't change from frame to frame, and does not
+        // rely on any coordinate system. It only has to be done if the
+        // GL context is damaged.
 
-    // initialize glew (for models)
-    GLenum err = glewInit();
-    if (GLEW_OK != err)
-    {
-        /* Problem: glewInit failed, something is seriously wrong. */
-        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-    }
+        // initialize glew (for models)
+        GLenum err = glewInit();
+        if (GLEW_OK != err)
+        {
+            /* Problem: glewInit failed, something is seriously wrong. */
+            fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+        }
 
-	double	fov_y;
+        double	fov_y;
 
-	// Sets the clear color to sky blue.
-	glClearColor(0.53f, 0.81f, 0.92f, 1.0);
+        // Sets the clear color to sky blue.
+        glClearColor(0.53f, 0.81f, 0.92f, 1.0);
 
-	// Turn on depth testing
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+        // Turn on depth testing
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
 
-	// Turn on back face culling. Faces with normals away from the viewer
-	// will not be drawn.
-	glEnable(GL_CULL_FACE);
+        // Turn on back face culling. Faces with normals away from the viewer
+        // will not be drawn.
+        glEnable(GL_CULL_FACE);
 
-	// Enable lighting with one light.
-	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHTING);
+        // Enable lighting with one light.
+        glEnable(GL_LIGHT0);
+        glEnable(GL_LIGHTING);
 
-	// Ambient and diffuse lighting track the current color.
-	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-	glEnable(GL_COLOR_MATERIAL);
+        // Ambient and diffuse lighting track the current color.
+        glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+        glEnable(GL_COLOR_MATERIAL);
 
-	// Turn on normal vector normalization. You don't have to give unit
-	// normal vector, and you can scale objects.
-	glEnable(GL_NORMALIZE);
+        // Turn on normal vector normalization. You don't have to give unit
+        // normal vector, and you can scale objects.
+        glEnable(GL_NORMALIZE);
 
-    // Allow opengl to look for normals in the bound buffer object
-    // necessary for my models to look right.
-    glEnableClientState(GL_NORMAL_ARRAY);
+        // Allow opengl to look for normals in the bound buffer object
+        // necessary for my models to look right.
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	// Set up the viewport.
-	glViewport(0, 0, w(), h());
+        // Set up the viewport.
+        glViewport(0, 0, w(), h());
 
-	// Set up the persepctive transformation.
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	fov_y = 360.0f / M_PI * atan(h() * tan(FOV_X * M_PI / 360.0) / w());
-	gluPerspective(fov_y, w() / (float)h(), 1.0, 1000.0);
+        // Set up the persepctive transformation.
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        fov_y = 360.0f / M_PI * atan(h() * tan(FOV_X * M_PI / 360.0) / w());
+        gluPerspective(fov_y, w() / (float)h(), 1.0, 1000.0);
 
-	// Do some light stuff. Diffuse color, and zero specular color
-	// turns off specular lighting.
-	color[0] = 1.0f; color[1] = 1.0f; color[2] = 1.0f; color[3] = 1.0f;
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
-	color[0] = 0.0f; color[1] = 0.0f; color[2] = 0.0f; color[3] = 1.0f;
-	glLightfv(GL_LIGHT0, GL_SPECULAR, color);
+        // Do some light stuff. Diffuse color, and zero specular color
+        // turns off specular lighting.
+        color[0] = 1.0f; color[1] = 1.0f; color[2] = 1.0f; color[3] = 1.0f;
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
+        color[0] = 0.0f; color[1] = 0.0f; color[2] = 0.0f; color[3] = 1.0f;
+        glLightfv(GL_LIGHT0, GL_SPECULAR, color);
 
-	// Initialize all the objects.
-	ground.Initialize();
-	//horizon.Initialize();
-	traintrack.Initialize();
-	springTree.Initialize();
-	summerTree.Initialize();
-	fallTree.Initialize();
-	winterTree.Initialize();
+        // Initialize all the objects.
+        ground.Initialize();
+        //horizon.Initialize();
+        traintrack.Initialize();
+        //teacups.Initialize();
+        springTree.Initialize();
+        summerTree.Initialize();
+        fallTree.Initialize();
+        winterTree.Initialize();
     }
 
     // Stuff out here relies on a coordinate system or must be done on every
@@ -139,6 +142,7 @@ WorldWindow::draw(void)
     ground.Draw();
 	//horizon.Draw();
     traintrack.Draw();
+	//teacups.Draw();
 
     glPushMatrix();
     glTranslatef(20.0f, 20.0f, 0.0f);
@@ -220,8 +224,9 @@ WorldWindow::Update(float dt)
     if ( button != -1 ) // Only do anything if the mouse button is down.
 	Drag(dt);
 
-    // Animate the train.
+    // Animate the train and teacups.
     traintrack.Update(dt);
+    teacups.Update(dt);
 
     return true;
 }

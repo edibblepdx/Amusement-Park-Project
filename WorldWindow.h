@@ -15,6 +15,7 @@
 #include <FL/Fl_Gl_Window.H>
 #include "Ground.h"
 #include "Track.h"
+#include "Teacups.h"
 #include "Tree.h"
 //#include "Horizon.h"
 
@@ -39,6 +40,7 @@ class WorldWindow : public Fl_Gl_Window {
     private:
 	Ground	ground;			// The ground object.
 	Track	traintrack;	    // The train and track.
+    Teacups teacups;        // The teacups object.
 	Tree	springTree;			// A tree object.
 	Tree	summerTree;			// A tree object.
 	Tree	fallTree;			// A tree object.

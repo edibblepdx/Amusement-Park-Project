@@ -14,7 +14,6 @@
 #include "Track.h"
 #include "GenericException.h"
 #include "objloader.h"
-#include "vboindexer.hpp"
 
 
 // The control points for the track spline.
@@ -47,8 +46,11 @@ Track::~Track(void)
 {
     if ( initialized )
     {
-	glDeleteLists(track_list, 1);
-	glDeleteLists(train_list, 1);
+        glDeleteLists(track_list, 1);
+        glDeleteLists(train_list, 1);
+        glDeleteBuffers(1, &vertexbuffer);
+        glDeleteBuffers(1, &uvbuffer);
+        glDeleteBuffers(1, &normalbuffer);
     }
 }
 
@@ -260,82 +262,89 @@ Track::Draw(void)
     // Draw the track
     glCallList(track_list);
 
-    glPushMatrix();
+    for (int i = 0; i < 1; ++i)
+    {
+        glPushMatrix();
+        
+        float train_pos = posn_on_track + 0.11 * i;
+        if ( train_pos > track->N() )
+        train_pos -= track->N();
+        
+        // Figure out where the train is
+        track->Evaluate_Point(train_pos, posn);
 
-    // Figure out where the train is
-    track->Evaluate_Point(posn_on_track, posn);
+        // Translate the train to the point
+        // move it a little above the track
+        glTranslatef(posn[0], posn[1], posn[2]+0.3);
 
-    // Translate the train to the point
-    // move it a little above the track
-    glTranslatef(posn[0], posn[1], posn[2]+0.3);
+        // ...and what it's orientation is
+        track->Evaluate_Derivative(train_pos, tangent);
+        Normalize_3(tangent);
 
-    // ...and what it's orientation is
-    track->Evaluate_Derivative(posn_on_track, tangent);
-    Normalize_3(tangent);
+        // Rotate it to point along the track, but stay horizontal
+        angle = atan2(tangent[1], tangent[0]) * 180.0 / M_PI;
+        glRotatef((float)angle, 0.0f, 0.0f, 1.0f);
 
-    // Rotate it to point along the track, but stay horizontal
-    angle = atan2(tangent[1], tangent[0]) * 180.0 / M_PI;
-    glRotatef((float)angle, 0.0f, 0.0f, 1.0f);
+        // Another rotation to get the tilt right.
+        angle = asin(-tangent[2]) * 180.0 / M_PI;
+        glRotatef((float)angle, 0.0f, 1.0f, 0.0f);
 
-    // Another rotation to get the tilt right.
-    angle = asin(-tangent[2]) * 180.0 / M_PI;
-    glRotatef((float)angle, 0.0f, 1.0f, 0.0f);
+        // Because the car was sideways
+        //glRotatef((float)90, 0.0f, 0.0f, -1.0f);
 
-    // Because the car was sideways
-    glRotatef((float)90, 0.0f, 0.0f, -1.0f);
+        // Draw the train
+        //glCallList(train_list);
 
-    // Draw the train
-    //glCallList(train_list);
+        glColor3f(0.9f, 0.0f, 0.0f);
 
-    glColor3f(0.9f, 0.0f, 0.0f);
+        // 1st attribute buffer : vertices
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+        glVertexAttribPointer(
+            0,                  // attribute
+            3,                  // size
+            GL_FLOAT,           // type
+            GL_FALSE,           // normalized?
+            0,                  // stride
+            (void*)0            // array buffer offset
+        );
+        
+        // 2nd attribute buffer : UVs
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+        glVertexAttribPointer(
+            1,                  // attribute
+            2,                  // size
+            GL_FLOAT,           // type
+            GL_FALSE,           // normalized?
+            0,                  // stride
+            (void*)0            // array buffer offset
+        );
 
-    // 1st attribute buffer : vertices
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glVertexAttribPointer(
-        0,                  // attribute
-        3,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
-    );
-    
-    // 2nd attribute buffer : UVs
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-    glVertexAttribPointer(
-        1,                  // attribute
-        2,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
-    );
+        // 3rd attribute buffer : normals
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+        glVertexAttribPointer(
+            2,                  // attribute
+            3,                  // size
+            GL_FLOAT,           // type
+            GL_FALSE,           // normalized?
+            0,                  // stride
+            (void*)0            // array buffer offset
+        );
 
-    // 3rd attribute buffer : normals
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-    glVertexAttribPointer(
-        2,                  // attribute
-        3,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
-    );
+        // tell opengl how my normals are stored: floats, consecutively, zero offset.
+        glNormalPointer(GL_FLOAT, 0, nullptr);
+        // draw the triangles
+        glDrawArrays(GL_TRIANGLES, 0, train_vertices.size());
+        
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
 
-    // tell opengl how my normals are stored: floats, consecutively, zero offset.
-    glNormalPointer(GL_FLOAT, 0, nullptr);
-    // draw the triangles
-    glDrawArrays(GL_TRIANGLES, 0, train_vertices.size());
-    
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
-
-    glPopMatrix();
-    glPopMatrix();
+        glPopMatrix();
+        glPopMatrix();
+    }
 }
 
 
