@@ -20,6 +20,8 @@ WorldWindow::WorldWindow(int x, int y, int width, int height, char *label)
 : Fl_Gl_Window(x, y, width, height, label)
 , ground{}
 , traintrack{}
+, teacups{}
+, carousel{}
 , springTree{SPRING, 2.0f, 0.25f, 8.0f, 2.0f}
 , summerTree{SUMMER, 1.75f, 1.0f, 6.0f, 3.5f}
 , fallTree{FALL, 3.0f, 0.5f, 5.0f, 2.0f}
@@ -110,6 +112,7 @@ WorldWindow::draw(void)
         //horizon.Initialize();
         traintrack.Initialize();
         teacups.Initialize();
+        carousel.Initialize();
         springTree.Initialize();
         summerTree.Initialize();
         fallTree.Initialize();
@@ -147,6 +150,8 @@ WorldWindow::draw(void)
     glTranslatef(-23.0f, -23.0f, 0.0f);
 	teacups.Draw();
     glPopMatrix();
+
+    carousel.Draw();
 
     // Spring Forest
     for (unsigned int i = 0; i < springForest.size(); i += 3)
@@ -259,6 +264,7 @@ WorldWindow::Update(float dt)
     // Animate the train and teacups.
     traintrack.Update(dt);
     teacups.Update(dt);
+    carousel.Update(dt);
 
     return true;
 }

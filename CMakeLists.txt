@@ -18,6 +18,7 @@ add_executable(executable
     WorldWindow.cpp
     Teacups.cpp
     TargaImage.cpp
+    Carousel.cpp
 )
 
 # Add include directories
