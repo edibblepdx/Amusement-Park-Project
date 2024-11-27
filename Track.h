@@ -31,12 +31,10 @@ class Track {
     std::vector<glm::vec2> train_uvs;
     std::vector<glm::vec3> train_normals;
 
-    // vertex array object
-    GLuint VAO;
     // my train buffers
     GLuint vertexbuffer;
-	GLuint uvbuffer;
-	GLuint normalbuffer;
+    GLuint uvbuffer;
+    GLuint normalbuffer;
 
   public:
     // Constructor

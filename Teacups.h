@@ -8,7 +8,6 @@
 #include <FL/gl.h>
 #include <vector>
 #include <glm/glm.hpp>
-//#include "TargaImage.h"
 
 class Teacups {
     private:
@@ -31,7 +30,7 @@ class Teacups {
         std::vector<glm::vec3> teacup_normals;
 
         // my teacup buffers
-        GLuint VAO;
+        //GLuint VAO;
         GLuint vertexbuffer;
         GLuint uvbuffer;
         GLuint normalbuffer;

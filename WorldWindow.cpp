@@ -85,12 +85,6 @@ WorldWindow::draw(void)
         // normal vector, and you can scale objects.
         glEnable(GL_NORMALIZE);
 
-        // Allow opengl to look for normals in the bound buffer object
-        // necessary for my models to look right.
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
         // Set up the viewport.
         glViewport(0, 0, w(), h());
 
@@ -147,7 +141,7 @@ WorldWindow::draw(void)
     traintrack.Draw();
 
     glPushMatrix();
-    glTranslatef(-23.0f, -23.0f, 0.0f);
+    glTranslatef(23.0f, 23.0f, 0.0f);
 	teacups.Draw();
     glPopMatrix();
 
@@ -191,19 +185,6 @@ WorldWindow::draw(void)
         winterTree.Draw();
         glPopMatrix();
     }
-
-
-    /*
-    glPushMatrix();
-    glTranslatef(-50.0f, -40.0f, 0.0f);
-	winterTree.Draw();
-    glPopMatrix();
-    */
-    
-    // Northeast Green Forest
-
-    // Southeast Green and Fall forest
-
 }
 
 
@@ -264,7 +245,7 @@ WorldWindow::Update(float dt)
     if ( button != -1 ) // Only do anything if the mouse button is down.
 	Drag(dt);
 
-    // Animate the train and teacups.
+    // Animate the train, teacups, and carousel.
     traintrack.Update(dt);
     teacups.Update(dt);
     carousel.Update(dt);

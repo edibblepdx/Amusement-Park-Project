@@ -48,7 +48,6 @@ Track::~Track(void)
     {
         glDeleteLists(track_list, 1);
         glDeleteLists(train_list, 1);
-        glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &vertexbuffer);
         glDeleteBuffers(1, &uvbuffer);
         glDeleteBuffers(1, &normalbuffer);
@@ -180,67 +179,36 @@ Track::Initialize(void)
     if (!ObjLoader("train_car.obj", train_vertices, train_uvs, train_normals))
         throw new GenericException("Track::C - Failed to load track car");
 
-    // create vertex array object
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
     // vertexbuffer
     glGenBuffers(1, &vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, train_vertices.size() * sizeof(glm::vec3), train_vertices.data(), GL_STATIC_DRAW);
-
-    /*
-    // 1st attribute buffer : vertices
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(
-        0,                  // attribute
-        3,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
+    glBufferData(
+        GL_ARRAY_BUFFER, 
+        train_vertices.size() * sizeof(glm::vec3), 
+        train_vertices.data(), 
+        GL_STATIC_DRAW
     );
-    */
     
     // uvbuffer
 	glGenBuffers(1, &uvbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-	glBufferData(GL_ARRAY_BUFFER, train_uvs.size() * sizeof(glm::vec2), train_uvs.data(), GL_STATIC_DRAW);
-
-    /*
-    // 2nd attribute buffer : UVs
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(
-        1,                  // attribute
-        2,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
+	glBufferData(
+        GL_ARRAY_BUFFER, 
+        train_uvs.size() * sizeof(glm::vec2), 
+        train_uvs.data(), 
+        GL_STATIC_DRAW
     );
-    */
 
     // normalbuffer
 	glGenBuffers(1, &normalbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-	glBufferData(GL_ARRAY_BUFFER, train_normals.size() * sizeof(glm::vec3), train_normals.data(), GL_STATIC_DRAW);
-
-    /*
-    // 3rd attribute buffer : normals
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(
-        2,                  // attribute
-        3,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
+	glBufferData(
+        GL_ARRAY_BUFFER, 
+        train_normals.size() * sizeof(glm::vec3), 
+        train_normals.data(), 
+        GL_STATIC_DRAW
     );
-    */
 
-    // unbind VAO
-    glBindVertexArray(0);
-    
     initialized = true;
 
     return true;
@@ -293,56 +261,33 @@ Track::Draw(void)
         // Because the car was sideways
         glRotatef((float)90, 0.0f, 0.0f, -1.0f);
 
-        glColor3f(0.9f, 0.0f, 0.0f);
+        // Enable client states for vertex,
+        // texture coordinate,
+        // and normal arrays
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
 
-        // 1st attribute buffer : vertices
-        glEnableVertexAttribArray(0);
+        // Bind the vertex buffer
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glVertexAttribPointer(
-            0,                  // attribute
-            3,                  // size
-            GL_FLOAT,           // type
-            GL_FALSE,           // normalized?
-            0,                  // stride
-            (void*)0            // array buffer offset
-        );
-        
-        // 2nd attribute buffer : UVs
-        glEnableVertexAttribArray(1);
+        glVertexPointer(3, GL_FLOAT, 0, (void*)0);
+
+        // Bind the texture coordinate buffer
         glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-        glVertexAttribPointer(
-            1,                  // attribute
-            2,                  // size
-            GL_FLOAT,           // type
-            GL_FALSE,           // normalized?
-            0,                  // stride
-            (void*)0            // array buffer offset
-        );
+        glTexCoordPointer(2, GL_FLOAT, 0, (void*)0);
 
-        // 3rd attribute buffer : normals
-        glEnableVertexAttribArray(2);
+        // Bind the normal buffer
         glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-        glVertexAttribPointer(
-            2,                  // attribute
-            3,                  // size
-            GL_FLOAT,           // type
-            GL_FALSE,           // normalized?
-            0,                  // stride
-            (void*)0            // array buffer offset
-        );
+        glNormalPointer(GL_FLOAT, 0, (void*)0);
 
-        // tell opengl how my normals are stored: floats, consecutively, zero offset.
-        glNormalPointer(GL_FLOAT, 0, nullptr);
-        // draw the triangles
+        // Draw the train car
+        glColor3f(0.9f, 0.0f, 0.0f);
         glDrawArrays(GL_TRIANGLES, 0, train_vertices.size());
         
-        //glBindVertexArray(VAO);
-        //glDrawArrays(GL_TRIANGLES, 0, train_vertices.size());
-        //glBindVertexArray(0);
-        
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
+        // Disable client states
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glDisableClientState(GL_NORMAL_ARRAY);
 
         glPopMatrix();
         glPopMatrix();

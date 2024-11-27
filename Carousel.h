@@ -25,7 +25,6 @@ class Carousel {
         GLdouble        theta;          // Rotation of track
         GLdouble        speed;          // Speed of rotation
         GLdouble        step;           // The spread of the horses on the track
-        GLuint          texture_obj;    // The object for the horse texture.
         bool            up;             // up or down horses
         GLdouble        max_horse_height;   // max horse height so they don't get into roof
         GLdouble        horse_offset;   // horse offset
@@ -56,7 +55,6 @@ class Carousel {
             theta = 0.0f; 
             speed = 15.0f;
             step = 360.0f / num_horses;
-            texture_obj = 0;
             up = true;
             max_horse_height = column_height - 4.0f;
             horse_offset = 0.0f;
