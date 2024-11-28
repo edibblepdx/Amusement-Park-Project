@@ -36,9 +36,11 @@ class Track {
     GLuint uvbuffer;
     GLuint normalbuffer;
 
+    GLuint          texture_obj;    // The object for the teacup texture.
+
   public:
     // Constructor
-    Track(void) { initialized = false; posn_on_track = 0.0f; speed = 0.0f; };
+    Track(void) { initialized = false; posn_on_track = 0.0f; speed = 0.0f; texture_obj = 0; };
 
     // Destructor
     ~Track(void);

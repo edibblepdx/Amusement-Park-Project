@@ -22,7 +22,6 @@ Teacups::~Teacups(void)
     {
         glDeleteLists(track_list, 1);
         glDeleteTextures(1, &texture_obj);
-        //glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &vertexbuffer);
         glDeleteBuffers(1, &uvbuffer);
         glDeleteBuffers(1, &normalbuffer);
@@ -219,9 +218,6 @@ Teacups::Draw(void)
 
     // Disable 2D texturing
     glDisable(GL_TEXTURE_2D);
-
-	// Turn texturing off
-	glDisable(GL_TEXTURE_2D);
 }
 
 
