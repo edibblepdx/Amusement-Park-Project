@@ -44,7 +44,7 @@ class Track {
     ~Track(void);
 
     bool    Initialize(void);	// Gets everything set up for drawing.
-    void    Update(float);	// Updates the location of the train
+    void    Update(float, float*, float*);	// Updates the location of the train
     void    Draw(void);		// Draws everything.
 };
 

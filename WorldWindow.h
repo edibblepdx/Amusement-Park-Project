@@ -21,6 +21,10 @@
 #include "Tree.h"
 //#include "Horizon.h"
 
+enum Camera {
+    FREE_CAM,
+    TRAIN_CAM,
+};
 
 // Subclass the Fl_Gl_Window because we want to draw OpenGL in here.
 class WorldWindow : public Fl_Gl_Window {
@@ -40,15 +44,18 @@ class WorldWindow : public Fl_Gl_Window {
 	bool Update(float);
 
     private:
-	Ground	ground;			// The ground object.
-	Track	traintrack;	    // The train and track.
-    Teacups teacups;        // The teacups object.
-    Carousel carousel;      // The carousel object.
+    Camera  camera;             // The camera mode
+	Ground	ground;			    // The ground object.
+	Track	traintrack;	        // The train and track.
+    Teacups teacups;            // The teacups object.
+    Carousel carousel;          // The carousel object.
 	Tree	springTree;			// A tree object.
 	Tree	summerTree;			// A tree object.
 	Tree	fallTree;			// A tree object.
 	Tree	winterTree;			// A tree object.
 	//Horizon	horizon;		// The horizon object.
+    float train_pos[3], train_dir[3];   // The train position and direction.
+
 
 	static const double FOV_X; // The horizontal field of view.
 

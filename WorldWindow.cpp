@@ -30,6 +30,10 @@ WorldWindow::WorldWindow(int x, int y, int width, int height, char *label)
 {
     button = -1;
 
+    train_pos[0] = train_pos[1] = train_pos[2] = 0.0f;
+    train_dir[0] = train_dir[1] = train_dir[2] = 0.0f; 
+
+    camera = TRAIN_CAM;
     // Initial viewing parameters.
     phi = 45.0f;
     theta = 0.0f;
@@ -119,15 +123,44 @@ WorldWindow::draw(void)
     // Clear the screen. Color and depth.
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-    // Set up the viewing transformation. The viewer is at a distance
-    // dist from (x_at, y_ay, 2.0) in the direction (theta, phi) defined
-    // by two angles. They are looking at (x_at, y_ay, 2.0) and z is up.
-    eye[0] = x_at + dist * cos(theta * M_PI / 180.0) * cos(phi * M_PI / 180.0);
-    eye[1] = y_at + dist * sin(theta * M_PI / 180.0) * cos(phi * M_PI / 180.0);
-    eye[2] = 2.0 + dist * sin(phi * M_PI / 180.0);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluLookAt(eye[0], eye[1], eye[2], x_at, y_at, 2.0, 0.0, 0.0, 1.0);
+    // Camera
+    switch (camera)
+    {
+        case FREE_CAM:
+            // Set up the viewing transformation. The viewer is at a distance
+            // dist from (x_at, y_ay, 2.0) in the direction (theta, phi) defined
+            // by two angles. They are looking at (x_at, y_ay, 2.0) and z is up.
+            eye[0] = x_at + dist * cos(theta * M_PI / 180.0) * cos(phi * M_PI / 180.0);
+            eye[1] = y_at + dist * sin(theta * M_PI / 180.0) * cos(phi * M_PI / 180.0);
+            eye[2] = 2.0 + dist * sin(phi * M_PI / 180.0);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            gluLookAt(eye[0], eye[1], eye[2], x_at, y_at, 2.0, 0.0, 0.0, 1.0);
+            break;
+        case TRAIN_CAM:
+            // Set up the viewing transformation. The viewer is sitting in the train.
+            float x, y, z;
+            train_pos[2] += 2.0f;   // move up in the seat
+
+            // uncomment if you want to move backwards or 
+            // forwards in the seat position
+            //train_pos[0] -= 1.0f * train_dir[0];
+            //train_pos[1] -= 1.0f * train_dir[1];
+            //train_pos[2] -= 1.0f * train_dir[2];
+
+            // setup the referece point along the -z direction
+            x = train_pos[0] + train_dir[0];
+            y = train_pos[1] + train_dir[1];
+            z = train_pos[2] + train_dir[2];
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            gluLookAt(
+                train_pos[0], train_pos[1], train_pos[2]    // eye
+                , x, y, z                                   // reference point
+                , 0.0, 0.0, 1.0                             // up direction
+            );
+            break;
+    }
 
     // Position the light source. This has to happen after the viewing
     // transformation is set up, so that the light stays fixed in world
@@ -246,7 +279,7 @@ WorldWindow::Update(float dt)
 	Drag(dt);
 
     // Animate the train, teacups, and carousel.
-    traintrack.Update(dt);
+    traintrack.Update(dt, train_pos, train_dir);
     teacups.Update(dt);
     carousel.Update(dt);
 
@@ -262,23 +295,33 @@ WorldWindow::handle(int event)
     // of where the mouse is and what mouse button is down, if any.
     switch ( event )
     {
-      case FL_PUSH:
-        button = Fl::event_button();
-	x_last = x_down = Fl::event_x();
-	y_last = y_down = Fl::event_y();
-	phi_down = phi;
-	theta_down = theta;
-	dist_down = dist;
-	x_at_down = x_at;
-	y_at_down = y_at;
-	return 1;
-      case FL_DRAG:
-	x_last = Fl::event_x();
-	y_last = Fl::event_y();
-	return 1;
-      case FL_RELEASE:
-        button = -1;
-	return 1;
+        case FL_PUSH:
+            if (camera != FREE_CAM) return 1;
+            button = Fl::event_button();
+            x_last = x_down = Fl::event_x();
+            y_last = y_down = Fl::event_y();
+            phi_down = phi;
+            theta_down = theta;
+            dist_down = dist;
+            x_at_down = x_at;
+            y_at_down = y_at;
+            return 1;
+        case FL_DRAG:
+            if (camera != FREE_CAM) return 1;
+            x_last = Fl::event_x();
+            y_last = Fl::event_y();
+            return 1;
+        case FL_RELEASE:
+            if (camera != FREE_CAM) return 1;
+            button = -1;
+            return 1;
+        case FL_KEYDOWN:
+            switch (Fl::event_key())
+            {
+                case 'c':
+                    camera = (camera == TRAIN_CAM) ? FREE_CAM : TRAIN_CAM;
+            }
+            return 1;
     }
 
     // Pass any other event types on the superclass.

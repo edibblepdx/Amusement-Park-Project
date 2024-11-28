@@ -296,7 +296,7 @@ Track::Draw(void)
 
 
 void
-Track::Update(float dt)
+Track::Update(float dt, float *pos, float *dir)
 {
     float   point[3];
     float   deriv[3];
@@ -335,6 +335,11 @@ Track::Update(float dt)
 	speed = 0.0;
     else
 	speed = (float)sqrt(2.0 * ( TRAIN_ENERGY - 9.81 * point[2] ));
+
+    // Get camera parameters
+	track->Evaluate_Point(posn_on_track, pos);
+    track->Evaluate_Derivative(posn_on_track, dir);
+    Normalize_3(dir);
 }
 
 
