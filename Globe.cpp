@@ -169,8 +169,8 @@ Globe::Update()
 {
     if ( ! initialized ) return;
 
-    // hardcap at 2 degrees of subdivision
-    degree = (degree + 1) % 3;
+    // hardcap at 5 degrees of subdivision
+    degree = (degree + 1) % 6;
 
     // create a new octahedron and subdivide it n degrees
     std::vector<Vertex> new_data = {Octahedron_Vertices};
@@ -182,13 +182,14 @@ Globe::Update()
         vertex.pos = radius * vertex.pos;
     }
 
-    auto indices_size = indices.size();
+    // subdivide each face n degrees
+    auto indices_size = Octahedron_Indices.size();
     for ( auto i = 0; i < indices_size; i += 3 )
     {
         Subdivide(
-            indices[i], 
-            indices[i+1],
-            indices[i+2],
+            Octahedron_Indices[i], 
+            Octahedron_Indices[i+1],
+            Octahedron_Indices[i+2],
             new_data,
             new_indices,
             degree
