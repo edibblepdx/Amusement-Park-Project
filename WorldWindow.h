@@ -19,6 +19,7 @@
 #include "Teacups.h"
 #include "Carousel.h"
 #include "Tree.h"
+#include "Globe.h"
 //#include "Horizon.h"
 
 enum Camera {
@@ -53,6 +54,7 @@ class WorldWindow : public Fl_Gl_Window {
 	Tree	summerTree;			// A tree object.
 	Tree	fallTree;			// A tree object.
 	Tree	winterTree;			// A tree object.
+    Globe   globe;              // A globe object.
 	//Horizon	horizon;		// The horizon object.
     float train_pos[3], train_dir[3];   // The train position and direction.
 

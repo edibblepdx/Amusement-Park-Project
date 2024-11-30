@@ -22,6 +22,7 @@ WorldWindow::WorldWindow(int x, int y, int width, int height, char *label)
 , traintrack{}
 , teacups{}
 , carousel{}
+, globe{}
 , springTree{SPRING, 2.0f, 0.25f, 8.0f, 2.0f}
 , summerTree{SUMMER, 1.75f, 1.0f, 6.0f, 3.5f}
 , fallTree{FALL, 3.0f, 0.5f, 5.0f, 2.0f}
@@ -33,7 +34,7 @@ WorldWindow::WorldWindow(int x, int y, int width, int height, char *label)
     train_pos[0] = train_pos[1] = train_pos[2] = 0.0f;
     train_dir[0] = train_dir[1] = train_dir[2] = 0.0f; 
 
-    camera = TRAIN_CAM;
+    camera = FREE_CAM;
     // Initial viewing parameters.
     phi = 45.0f;
     theta = 0.0f;
@@ -115,6 +116,7 @@ WorldWindow::draw(void)
         summerTree.Initialize();
         fallTree.Initialize();
         winterTree.Initialize();
+        globe.Initialize();
     }
 
     // Stuff out here relies on a coordinate system or must be done on every
@@ -172,6 +174,11 @@ WorldWindow::draw(void)
     ground.Draw();
 	//horizon.Draw();
     traintrack.Draw();
+
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, 5.0f);
+    globe.Draw();
+    glPopMatrix();
 
     glPushMatrix();
     glTranslatef(23.0f, 23.0f, 0.0f);
