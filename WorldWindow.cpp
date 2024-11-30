@@ -327,6 +327,8 @@ WorldWindow::handle(int event)
             {
                 case 'c':
                     camera = (camera == TRAIN_CAM) ? FREE_CAM : TRAIN_CAM;
+                case 's':
+                    globe.Update();
             }
             return 1;
     }

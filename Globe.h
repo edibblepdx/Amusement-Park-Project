@@ -40,12 +40,15 @@ const std::vector<GLuint> Octahedron_Indices = {
 
 class Globe {
   private:
-    GLubyte display_list;   // The display list that does all the work.
     GLuint  texture_obj;    // The object for the grass texture.
     bool    initialized;    // Whether or not we have been initialised.
 
-    std::vector<Vertex> vertex_data;
-    std::vector<GLuint> indices;
+    GLuint  degree;         // The degree of subdivision.
+    GLfloat radius;         // The radius of the globe.
+
+    // globe data
+    std::vector<Vertex> vertex_data;  // each element contains pos, uv, normal
+    std::vector<GLuint> indices;   
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> uvs;
     std::vector<glm::vec3> normals;
@@ -58,8 +61,9 @@ class Globe {
 
   public:
     Globe(void) { 
-      display_list = 0; 
       initialized = false; 
+      degree = 0;
+      radius = 5.0;
       vertex_data = {Octahedron_Vertices}; 
       indices = {Octahedron_Indices}, 
       vertices = {}; 
@@ -69,6 +73,8 @@ class Globe {
 
     ~Globe(void);
 
+    void    CleanupBuffers(void);
+
     void    Index();
 
     // Initializer. Creates the display list.
@@ -76,6 +82,12 @@ class Globe {
 
     // Does the drawing.
     void    Draw(void);
+
+    // Wraps the subdivision
+    void    Update();
+
+    // Does the subdivision
+    void    Subdivide(GLuint, GLuint, GLuint, std::vector<Vertex>&, std::vector<GLuint>&, GLuint);
 };
 
 
