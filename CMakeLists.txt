@@ -20,6 +20,7 @@ add_executable(executable
     TargaImage.cpp
     Carousel.cpp
     Globe.cpp
+    Hill.cpp
 )
 
 # Add include directories

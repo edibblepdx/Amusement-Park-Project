@@ -1,5 +1,5 @@
 /*
- * Globe.cpp: A class for drawing a subdivided globe.
+ * Hill.cpp: A class for drawing a subdivided globe.
  */
 
 
@@ -8,11 +8,12 @@
 #include <stdio.h>
 #include <math.h>
 #include <iostream>
-#include "Globe.h"
+#include <map>
+#include "Hill.h"
 #include "libtarga.h"
 
 // Destructor
-Globe::~Globe(void)
+Hill::~Hill(void)
 {
     if ( initialized )
     {
@@ -22,7 +23,7 @@ Globe::~Globe(void)
 }
 
 void
-Globe::CleanupBuffers()
+Hill::CleanupBuffers()
 {
     glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &uvbuffer);
@@ -31,7 +32,7 @@ Globe::CleanupBuffers()
 }
 
 void
-Globe::Index()
+Hill::Index()
 {
     // cleanup old data
     CleanupBuffers();
@@ -66,14 +67,14 @@ Globe::Index()
 // Initializer. Returns false if something went wrong, like not being able to
 // load the texture.
 bool
-Globe::Initialize(void)
+Hill::Initialize(void)
 {
     // Load textures
     ubyte   *image_data;
     int	    image_height, image_width;
-    if ( ! ( image_data = (ubyte*)tga_load("2k_earth_daymap.tga", &image_width, &image_height, TGA_TRUECOLOR_24) ) )
+    if ( ! ( image_data = (ubyte*)tga_load("grass.tga", &image_width, &image_height, TGA_TRUECOLOR_24) ) )
     {
-        fprintf(stderr, "Globe::Initialize: Couldn't load 2k_earth_daymap.tga\n");
+        fprintf(stderr, "Hill::Initialize: Couldn't load grass.tga\n");
         return false;
     }
 
@@ -98,14 +99,10 @@ Globe::Initialize(void)
     // free the image data
     free(image_data);
 
-    // scale the octahedron
-    for ( auto &vertex : vertex_data )
-    {
-        vertex.pos = radius * vertex.pos;
-    }
-
-    // index the octahedron and make buffers
-    Index(); 
+    // index the pyramid and make buffers
+    degree = 5;
+    Update();
+    //Index(); 
 
     // We only do all this stuff once, when the GL context is first set up.
     initialized = true;
@@ -116,7 +113,7 @@ Globe::Initialize(void)
 
 // Draw just calls the display list we set up earlier.
 void
-Globe::Draw(void)
+Hill::Draw(void)
 {
     //glShadeModel(GL_FLAT);
 
@@ -165,31 +162,25 @@ Globe::Draw(void)
 
 // Update
 void
-Globe::Update()
+Hill::Update()
 {
-    if ( ! initialized ) return;
+    //if ( ! initialized ) return;
 
     // hardcap at 5 degrees of subdivision
-    degree = (degree + 1) % 6;
+    //degree = (degree + 1) % 6;
 
-    // create a new octahedron and subdivide it n degrees
-    std::vector<Vertex> new_data = {Octahedron_Vertices};
-    std::vector<GLuint> new_indices = {};   // empty until we fill it
-
-    // scale the initial octahedron
-    for ( auto& vertex : new_data )
-    {
-        vertex.pos = radius * vertex.pos;
-    }
+    // create a new pyramid and subdivide it n degrees
+    std::vector<Vertex> new_data = {Pyramid_Vertices};
+    std::vector<GLuint> new_indices = {Pyramid_Indices};   // empty until we fill it
 
     // subdivide each face n degrees
-    auto indices_size = Octahedron_Indices.size();
+    auto indices_size = Pyramid_Indices.size();
     for ( auto i = 0; i < indices_size; i += 3 )
     {
         Subdivide(
-            Octahedron_Indices[i], 
-            Octahedron_Indices[i+1],
-            Octahedron_Indices[i+2],
+            Pyramid_Indices[i], 
+            Pyramid_Indices[i+1],
+            Pyramid_Indices[i+2],
             new_data,
             new_indices,
             degree
@@ -213,7 +204,7 @@ Globe::Update()
 //   2 --- 23 --- 3
 
 void    
-Globe::Subdivide(GLuint i1, GLuint i2, GLuint i3
+Hill::Subdivide(GLuint i1, GLuint i2, GLuint i3
                 , std::vector<Vertex> &vertices, std::vector<GLuint> &indices
                 , GLuint degree)
 {
@@ -230,40 +221,60 @@ Globe::Subdivide(GLuint i1, GLuint i2, GLuint i3
         return;
     }
 
-    Vertex v1 = vertices[i1];
-    Vertex v2 = vertices[i2];
-    Vertex v3 = vertices[i3];
+    static std::map<std::pair<GLuint, GLuint>, GLuint> midpoint_tbl;
+    float local_scale = scale * (degree + 1);
 
-    Vertex v12, v23, v31;
+    // find a midpoint
+    auto split = [&] (GLuint &i1, GLuint &i2) -> GLuint
+    {
+        auto it = midpoint_tbl.find(std::make_pair(std::min(i1, i2), std::max(i1, i2)));
+        if (it == midpoint_tbl.end())
+        {
+            // create a new vertex if midpoint does not exist
+            Vertex v12;
+            Split(vertices[i1], vertices[i2], v12, local_scale);
+            vertices.push_back(v12);
 
-    // normal
-    v12.normal = glm::normalize(v1.pos + v2.pos); 
-    v23.normal = glm::normalize(v2.pos + v3.pos); 
-    v31.normal = glm::normalize(v3.pos + v1.pos); 
+            // add to midpoint table
+            GLuint index = vertices.size() - 1;
+            midpoint_tbl[std::make_pair(std::min(i1, i2), std::max(i1, i2))] = index;
 
-    // position
-    v12.pos = radius * v12.normal;
-    v23.pos = radius * v23.normal;
-    v31.pos = radius * v31.normal;
-
-    // uv
-    v12.uv = (v1.uv + v2.uv) / 2.0f;
-    v23.uv = (v2.uv + v3.uv) / 2.0f;
-    v31.uv = (v3.uv + v1.uv) / 2.0f;
-
-    // add new vertices
-    vertices.push_back(v12);
-    vertices.push_back(v23);
-    vertices.push_back(v31);
+            return index;
+        }
+        return it->second;
+    };
 
     // get the indices of the new vertices
-    GLuint i12 = vertices.size() - 3;
-    GLuint i23 = vertices.size() - 2;
-    GLuint i31 = vertices.size() - 1;
+    GLuint i12 = split(i1, i2);
+    GLuint i23 = split(i2, i3);
+    GLuint i31 = split(i3, i1);
 
     // recurse
     Subdivide(i1, i12, i31, vertices, indices, degree - 1);
     Subdivide(i12, i2, i23, vertices, indices, degree - 1);
     Subdivide(i31, i23, i3, vertices, indices, degree - 1);
     Subdivide(i12, i23, i31, vertices, indices, degree - 1);
+}
+
+void
+Hill::Split(Vertex &v1, Vertex &v2, Vertex &v12, GLfloat scale)
+{
+    // direction vector
+    glm::vec3 r = v2.pos - v1.pos;
+
+    // position
+    v12.pos = v1.pos + (r / 2.0f);
+
+    // randomly modulate z
+    // don't modulate the base
+    if (v12.pos.z != 0.0f) {
+        v12.pos.z += std::fmod(std::rand(), scale);
+    }
+
+    // normal
+    v12.normal = glm::normalize(v12.pos); 
+    //v12.normal = {0.0f, 0.0f, 1.0f};
+
+    // uv
+    v12.uv = (v1.uv + v2.uv) / 2.0f;
 }

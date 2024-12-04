@@ -23,6 +23,7 @@ WorldWindow::WorldWindow(int x, int y, int width, int height, char *label)
 , teacups{}
 , carousel{}
 , globe{}
+, hill{}
 , springTree{SPRING, 2.0f, 0.25f, 8.0f, 2.0f}
 , summerTree{SUMMER, 1.75f, 1.0f, 6.0f, 3.5f}
 , fallTree{FALL, 3.0f, 0.5f, 5.0f, 2.0f}
@@ -117,6 +118,7 @@ WorldWindow::draw(void)
         fallTree.Initialize();
         winterTree.Initialize();
         globe.Initialize();
+        hill.Initialize();
     }
 
     // Stuff out here relies on a coordinate system or must be done on every
@@ -176,7 +178,12 @@ WorldWindow::draw(void)
     traintrack.Draw();
 
     glPushMatrix();
-    glTranslatef(0.0f, 0.0f, 5.0f);
+    glTranslatef(40.0f, -40.0f, 0.0f);
+    hill.Draw();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, 10.0f);
     globe.Draw();
     glPopMatrix();
 
@@ -327,8 +334,12 @@ WorldWindow::handle(int event)
             {
                 case 'c':
                     camera = (camera == TRAIN_CAM) ? FREE_CAM : TRAIN_CAM;
+                    break;
                 case 's':
                     globe.Update();
+                    break;
+                default:
+                    break;
             }
             return 1;
     }

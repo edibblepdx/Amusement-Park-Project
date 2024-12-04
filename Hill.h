@@ -1,45 +1,40 @@
 /*
- * Globe.h: Header file for a class that draws the a subdivided globe.
+ * Hill.h: Header file for a class that draws the a subdivided globe.
  */
 
 
-#ifndef _GLOBE_H_
-#define _GLOBE_H_
+#ifndef _HILL_H_
+#define _HILL_H_
 
 #include <FL/gl.h>
 #include <glm/glm.hpp>
 #include <vector>
 #include "Vertex.h"
 
-// Vertices for an octahedron
-const std::vector<Vertex> Octahedron_Vertices = {
-    Vertex{{0, 0, 1},         {0.5, 1},     {0, 0, 1}},           // 0    top
-    Vertex{{0, 0, -1},        {0.5, 0},     {0, 0, -1}},          // 1    bottom
-    Vertex{{0.71, 0.71, 0},   {0, 0.5},     {0.71, 0.71, 0}},     // 2
-    Vertex{{0.71, -0.71, 0},  {0.75, 0.5},  {0.71, -0.71, 0}},    // 3
-    Vertex{{-0.71, 0.71, 0},  {0.25, 0.5},  {-0.71, 0.71, 0}},    // 4
-    Vertex{{-0.71, -0.71, 0}, {0.5, 0.5},   {-0.71, -0.71, 0}},   // 5
+// Vertices for a pyramid
+const std::vector<Vertex> Pyramid_Vertices = {
+    Vertex{{0, 0, 5.0},         {25, 50},     {0, 0, 2.0}},           // 0    top
+    Vertex{{10.0, 10.0, 0},   {0, 25},     {10.0, 10.0, 0}},     // 1
+    Vertex{{10.0, -10.0, 0},  {37.5, 25},  {10.0, -10.0, 0}},    // 2
+    Vertex{{-10.0, 10.0, 0},  {25, 25},  {-10.0, 10.0, 0}},    // 10
+    Vertex{{-10.0, -10.0, 0}, {25, 25},   {-10.0, -10.0, 0}},   // 4
 };
 
-// Indices for an octahedron
-const std::vector<GLuint> Octahedron_Indices = {
-    0, 2, 4,
-    0, 4, 5,
-    0, 5, 3,
-    0, 3, 2,
-    1, 4, 2,
-    1, 5, 4,
-    1, 3, 5,
-    1, 2, 3,
+// Indices for an pyramid
+const std::vector<GLuint> Pyramid_Indices = {
+    0, 1, 3,
+    0, 3, 4,
+    0, 4, 2,
+    0, 2, 1,
 };
 
-class Globe {
+class Hill {
   private:
     GLuint  texture_obj;    // The object for the grass texture.
     bool    initialized;    // Whether or not we have been initialised.
 
     GLuint  degree;         // The degree of subdivision.
-    GLfloat radius;         // The radius of the globe.
+    GLfloat scale;          // How much detail / modulation.
 
     // globe data
     std::vector<Vertex> vertex_data;  // each element contains pos, uv, normal
@@ -55,18 +50,18 @@ class Globe {
     GLuint indexbuffer;
 
   public:
-    Globe(void) { 
+    Hill(void) { 
       initialized = false; 
       degree = 0;
-      radius = 10.0;
-      vertex_data = {Octahedron_Vertices}; 
-      indices = {Octahedron_Indices}, 
+      scale = 0.5f;
+      vertex_data = {Pyramid_Vertices}; 
+      indices = {Pyramid_Indices}, 
       vertices = {}; 
       uvs = {}; 
       normals = {}; 
     }
 
-    ~Globe(void);
+    ~Hill(void);
 
     void    CleanupBuffers(void);
 
@@ -83,6 +78,9 @@ class Globe {
 
     // Does the subdivision
     void    Subdivide(GLuint, GLuint, GLuint, std::vector<Vertex>&, std::vector<GLuint>&, GLuint);
+        
+    // Splits an edge
+    void    Split(Vertex&, Vertex&, Vertex&, GLfloat);
 };
 
 
