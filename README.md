@@ -11,3 +11,6 @@ https://sketchfab.com/3d-models/horse-low-poly-base-mesh-b2d8cc3ba9e54f9fb629912
 
 Earth texture source
 https://www.solarsystemscope.com/textures/
+
+https://github.com/user-attachments/assets/3b09d97f-5ea6-45cd-9203-f89986142831
+
