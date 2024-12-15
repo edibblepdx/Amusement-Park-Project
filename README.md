@@ -16,7 +16,7 @@ Includes:
 - Parameterized Trees
 - Hierarchically Animated Teacups and Carousel
 - Cheated Swept rails
-- Tesellated Hill
+- Tesellated Hill (not in video)
 - Subdivided Globe (has repeated verts)
 - Texture Mapping
 - Train Car and Teacups modeled in Blender
