@@ -14,3 +14,11 @@ https://www.solarsystemscope.com/textures/
 
 https://github.com/user-attachments/assets/3b09d97f-5ea6-45cd-9203-f89986142831
 
+- Parametric Trees
+- Hierarchically Animated Teacups
+- Hierarchically Animated Carousel
+- Cheated Swept rails
+- Tesellated Hill
+- Subdivided Globe (has repeated verts)
+- Texture Mapping
+- Train Car and Teacups modeled in Blender
