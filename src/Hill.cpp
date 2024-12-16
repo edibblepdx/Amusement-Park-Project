@@ -272,8 +272,8 @@ Hill::Split(Vertex &v1, Vertex &v2, Vertex &v12, GLfloat scale)
     }
 
     // normal
-    v12.normal = glm::normalize(v12.pos); 
-    //v12.normal = {0.0f, 0.0f, 1.0f};
+    //v12.normal = glm::normalize(v12.pos); 
+    v12.normal = {0.0f, 0.0f, 1.0f};
 
     // uv
     v12.uv = (v1.uv + v2.uv) / 2.0f;
