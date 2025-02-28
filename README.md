@@ -1,3 +1,4 @@
+> My first OpenGL project: an amusement park
 # How to Build
 ```
 mkdir build
